@@ -5,8 +5,8 @@ const bodyParser = require('body-parser')
 
 //dishRouter is a filepath  
 const dishRouter = require('./routes/dishRouter')
-const promotionsRouter = require('./routes/promotionsRouter')
-const leadersRouter = require('./routes/leadersRouter')
+const promotionsRouter = require('./routes/promoRouter')
+const leadersRouter = require('./routes/leaderRouter')
 
 const hostname = 'localhost'
 const port = 3000 
