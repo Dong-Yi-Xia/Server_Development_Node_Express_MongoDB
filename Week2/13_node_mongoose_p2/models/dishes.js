@@ -1,6 +1,8 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
+//can also be written like so
+// const { Schema } = mongoose;
 
 const commentSchema = new Schema({
     rating: {
@@ -42,6 +44,7 @@ const dishSchema = new Schema({
 let Dishes = mongoose.model('Dish', dishSchema)
 
 module.exports = Dishes
+
 
 
 
