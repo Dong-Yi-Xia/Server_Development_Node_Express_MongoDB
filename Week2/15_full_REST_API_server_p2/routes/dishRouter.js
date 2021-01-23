@@ -38,7 +38,8 @@ dishRouter.route('/')
 })
 
 .delete((req,res,next) => {
-    Dishes.deleteMany({})
+    // Dishes.deleteMany({})
+    Dishes.remove({})
     .then((response) => {
         res.statusCode = 200
         res.setHeader('Content-Type', 'application/json')
@@ -77,7 +78,8 @@ dishRouter.route('/:dishId')
 })
 
 .delete((req,res,next) => {
-    Dishes.findByIdAndDelete(req.params.dishId)
+    // Dishes.findByIdAndDelete(req.params.dishId)
+    Dishes.findByIdAndRemove(req.params.dishId)
     .then((response) => {
         res.statusCode = 200
         res.setHeader('Content-Type', 'application/json')
