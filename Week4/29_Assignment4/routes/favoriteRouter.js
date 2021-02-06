@@ -10,10 +10,15 @@ favoriteRouter.use(bodyParser.json())
 
 favoriteRouter.route('/')
 .get(authenticate.verifyUser, (req,res,next)=> {
-    Favorites.find({user: req.user._id})
+    // Favorites.find({user: req.user._id})  
+    // find() will return an array findOne() return a single {}
+    Favorites.findOne({user: req.user._id})
     .populate('user')
     .populate('dishes')
     .then(favorites => {
+        if(favorites === null){
+            res.end('You have no favorite dishes')
+        }
         res.statusCode = 200
         res.setHeader('Content-Type', 'application/json')
         res.json(favorites)
@@ -22,16 +27,16 @@ favoriteRouter.route('/')
 })
 
 .post(authenticate.verifyUser, (req,res,next)=> {
-    Favorites.find({user: req.user._id})
+    Favorites.findOne({user: req.user._id})
     .then(favorite => {
-        if(favorite.length > 0){
+        if(favorite !== null){
             for(let i=0; i<req.body.length; i++){
-                if(!favorite[0].dishes.includes(req.body[i]._id) ){
-                    favorite[0].dishes.push(req.body[i]._id)
+                if(!favorite.dishes.includes(req.body[i]._id) ){
+                    favorite.dishes.push(req.body[i]._id)
                 }
             }
-            Favorites.findByIdAndUpdate(favorite[0]._id, 
-                {dishes: favorite[0].dishes },
+            Favorites.findByIdAndUpdate(favorite._id, 
+                {dishes: favorite.dishes },
                 {new: true} //return the updated version
             )
             .then(favorite => {
@@ -67,17 +72,18 @@ favoriteRouter.route('/')
     .catch((err) => next(err))
 })
 
+
 //////////////////////////
 favoriteRouter.route('/:dishId')
 .post(authenticate.verifyUser, (req,res,next)=> {
-    Favorites.find({user: req.user._id})
+    Favorites.findOne({user: req.user._id})
     .then(favorite => {
-        if(favorite.length > 0){   
-            if(!favorite[0].dishes.includes(req.params.dishId) ){
-                favorite[0].dishes.push(req.params.dishId)
+        if(favorite !== null){   
+            if(!favorite.dishes.includes(req.params.dishId) ){
+                favorite.dishes.push(req.params.dishId)
             }
-            Favorites.findByIdAndUpdate(favorite[0]._id, 
-                {dishes: favorite[0].dishes },
+            Favorites.findByIdAndUpdate(favorite._id, 
+                {dishes: favorite.dishes },
                 {new: true}
             )
             .then(favorite => {
@@ -103,7 +109,7 @@ favoriteRouter.route('/:dishId')
 })
 
 .delete(authenticate.verifyUser, (req,res,next)=> {
-    
+
 })
 
 module.exports = favoriteRouter
