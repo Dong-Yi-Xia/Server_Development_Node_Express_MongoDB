@@ -9,7 +9,8 @@ const favoriteRouter = express.Router()
 favoriteRouter.use(bodyParser.json())
 
 favoriteRouter.route('/')
-.get(authenticate.verifyUser, (req,res,next)=> {
+.options(cors.corsWithOptions, (req, res) => {res.sendStatus(200)})
+.get(cors.corsWithOptions, authenticate.verifyUser, (req,res,next)=> {
     // Favorites.find({user: req.user._id})  
     // find() will return an array findOne() return a single {}
     Favorites.findOne({user: req.user._id})
@@ -26,7 +27,7 @@ favoriteRouter.route('/')
     .catch(err => next(err))
 })
 
-.post(authenticate.verifyUser, (req,res,next)=> {
+.post(cors.corsWithOptions, authenticate.verifyUser, (req,res,next)=> {
     Favorites.findOne({user: req.user._id})
     .then(favorite => {
         if(favorite !== null){
@@ -62,7 +63,7 @@ favoriteRouter.route('/')
 })
 
 
-.delete(authenticate.verifyUser, (req,res,next)=> {
+.delete(cors.corsWithOptions, authenticate.verifyUser, (req,res,next)=> {
     Favorites.remove({})
     .then((favorite) => {
         res.statusCode = 200
@@ -74,8 +75,10 @@ favoriteRouter.route('/')
 
 
 //////////////////////////
+
 favoriteRouter.route('/:dishId')
-.post(authenticate.verifyUser, (req,res,next)=> {
+.options(cors.corsWithOptions, (req, res) => {res.sendStatus(200)})
+.post(cors.corsWithOptions, authenticate.verifyUser, (req,res,next)=> {
     Favorites.findOne({user: req.user._id})
     .then(favorite => {
         if(favorite !== null){   
@@ -108,30 +111,31 @@ favoriteRouter.route('/:dishId')
     }) 
 })
 
-.delete(authenticate.verifyUser, (req,res,next)=> {
+.delete(cors.corsWithOptions, authenticate.verifyUser, (req,res,next)=> {
     Favorites.findOne({user: req.user._id})
     .then(favorite => {
-      let updated = favorite.dishes.filter(dish => {
-          console.log(dish._id.toString())
-          return dish._id.toString() !== req.params.dishId.toString()
-      })
-      Favorites.findByIdAndUpdate(favorite._id, 
-        {dishes: updated},
-        {new: true}
-    )
+        let updated = favorite.dishes.filter(dish => {
+            console.log(dish._id.toString())
+            return dish._id.toString() !== req.params.dishId.toString()
+        })
+        Favorites.findByIdAndUpdate(favorite._id, 
+            {dishes: updated},
+            {new: true}
+        )
 
-    // just doing update() will return the modified and deleted count in JSON
-    //   favorite.update(
-    //       {dishes: updated},
-    //       {new: true}
-    //   )
-    
-     .then(favorite => {
-         res.statusCode = 200
-         res.setHeader('Content-Type', 'application/json')
-         res.json(favorite)
-         })
-    })
+        // just doing update() will return the modified and deleted count in JSON
+        //   favorite.update(
+        //       {dishes: updated},
+        //       {new: true}
+        //   )
+        
+        .then(favorite => {
+            res.statusCode = 200
+            res.setHeader('Content-Type', 'application/json')
+            res.json(favorite)
+        },err => next(err))
+        .catch(err => next(err))
+        })
 
 })
 
