@@ -109,6 +109,29 @@ favoriteRouter.route('/:dishId')
 })
 
 .delete(authenticate.verifyUser, (req,res,next)=> {
+    Favorites.findOne({user: req.user._id})
+    .then(favorite => {
+      let updated = favorite.dishes.filter(dish => {
+          console.log(dish._id.toString())
+          return dish._id.toString() !== req.params.dishId.toString()
+      })
+      Favorites.findByIdAndUpdate(favorite._id, 
+        {dishes: updated},
+        {new: true}
+    )
+
+    // just doing update() will return the modified and deleted count in JSON
+    //   favorite.update(
+    //       {dishes: updated},
+    //       {new: true}
+    //   )
+    
+     .then(favorite => {
+         res.statusCode = 200
+         res.setHeader('Content-Type', 'application/json')
+         res.json(favorite)
+         })
+    })
 
 })
 
