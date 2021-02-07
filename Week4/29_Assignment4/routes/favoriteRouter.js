@@ -64,7 +64,7 @@ favoriteRouter.route('/')
 
 
 .delete(cors.corsWithOptions, authenticate.verifyUser, (req,res,next)=> {
-    Favorites.remove({})
+    Favorites.findOneAndDelete({user: req.user._id})
     .then((favorite) => {
         res.statusCode = 200
         res.setHeader('Content-Type', 'application/json')
