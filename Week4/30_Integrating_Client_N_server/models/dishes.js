@@ -6,23 +6,6 @@ require('mongoose-currency').loadType(mongoose)
 //creating a new type value
 const Currency = mongoose.Types.Currency
 
-const commentSchema = new Schema({
-    rating: {
-        type: Number,
-        min: 1,
-        max: 5,
-        required: true
-    },
-    comment: {
-        type: String,
-        required: true
-    },
-    author: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User" //reference to the User model, belongs to a User
-    }
-})
-
 
 // Schema 2nd parameter as the JSON timestamp when created or updated
 const dishSchema = new Schema({
@@ -55,9 +38,7 @@ const dishSchema = new Schema({
     feature: {
         type: Boolean,
         default: false
-    },
-    //creating subdocumemts inside a schema
-    comments: [ commentSchema ]
+    }
 },{
     timestamps: true
 })
